@@ -1,0 +1,1 @@
+// Placeholder file - adapters disabled for build compatibility
