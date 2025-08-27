@@ -1,10 +1,33 @@
-FROM verdaccio/verdaccio:5
+FROM node:18-alpine
 
-# Copy configuration
-COPY verdaccio-config.yaml /verdaccio/conf/config.yaml
+WORKDIR /app
 
-# Expose port
-EXPOSE 4873
+# Copy package files
+COPY package*.json ./
+COPY pnpm-workspace.yaml ./
 
-# Start verdaccio
-CMD ["verdaccio", "--config", "/verdaccio/conf/config.yaml", "--listen", "0.0.0.0:4873"]
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy all packages
+COPY packages/ ./packages/
+COPY services/api/ ./services/api/
+
+# Install dependencies
+RUN pnpm install
+
+# Build packages
+RUN pnpm run build
+
+# Set working directory to API service
+WORKDIR /app/services/api
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Create uploads directory
+RUN mkdir -p uploads
+
+EXPOSE 3001
+
+CMD ["npm", "run", "start:dev"]
