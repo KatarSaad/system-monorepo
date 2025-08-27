@@ -7,20 +7,17 @@
     "services/*"
   ],
   "scripts": {
-    "dev": "docker-compose up --build",
-    "start": "docker-compose up",
+    "dev": "docker-compose up -d && cd services/api && npm run start:dev",
+    "tools": "docker-compose up -d",
     "stop": "docker-compose down",
     "clean": "docker-compose down -v",
     "build": "pnpm run --recursive build",
     "test": "pnpm run --recursive test",
     "lint": "pnpm run --recursive lint",
-    "setup": "pnpm install && pnpm run build",
+    "setup": "pnpm install",
+    "api:dev": "cd services/api && npm run start:dev",
     "api:setup": "cd services/api && npx prisma generate && npx prisma db push",
-    "api:migrate": "cd services/api && npx prisma migrate dev",
-    "api:seed": "cd services/api && npx prisma db seed",
     "logs": "docker-compose logs -f",
-    "logs:api": "docker-compose logs -f api",
-    "restart": "docker-compose restart",
     "health": "curl -f http://localhost:3001/health"
   },
   "devDependencies": {
